@@ -1,0 +1,37 @@
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shifts-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  minReadySeconds: 5
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: shifts
+  template:
+    metadata:
+      labels:
+        app: shifts
+    spec:
+      containers:
+      - name: shifts-container
+        image: stacksimplify/kubenginx:2.0.0
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: '1'
+            memory: '500Mi'
+          requests:
+            cpu: '1'
+            memory: '500Mi'
+        ports:
+        - containerPort: 8085
+      imagePullSecrets:
+      - name: regcred
